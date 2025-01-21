@@ -1,25 +1,27 @@
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 public class Game {
-    private List<Player> players = new ArrayList<>();
+    private Map<String, Player> players = new HashMap<>();
 
 
     public void register(Player player) {
-        players.add(player);
+        // При добавлении мы кладём в мапу пару: (имя -> Player)
+        players.put(player.getName(), player);
     }
 
     /**
-     * Метод для проведения "раунда" между двумя игроками по их именам.
+     * Метод для проведения раунда между двумя игроками по их именам.
      * @param playerName1 имя первого игрока
      * @param playerName2 имя второго игрока
      * @return 1, если победил первый; 2 — если второй; 0 — если ничья
      * @throws NotRegisteredException если хотя бы один из игроков не зарегистрирован
      */
     public int round(String playerName1, String playerName2) {
-        Player player1 = findByName(playerName1);
-        Player player2 = findByName(playerName2);
+        Player player1 = players.get(playerName1);
+        Player player2 = players.get(playerName2);
 
+        // Если по ключу в мапе вернулся null, значит игрок не найден
         if (player1 == null) {
             throw new NotRegisteredException("Игрок с именем " + playerName1 + " не зарегистрирован");
         }
@@ -27,6 +29,7 @@ public class Game {
             throw new NotRegisteredException("Игрок с именем " + playerName2 + " не зарегистрирован");
         }
 
+        // Сравниваем силу
         if (player1.getStrength() > player2.getStrength()) {
             return 1;
         } else if (player1.getStrength() < player2.getStrength()) {
@@ -37,18 +40,7 @@ public class Game {
     }
 
 
-     //Дополнительный вспомогательный метод: найти игрока по имени.
-    private Player findByName(String name) {
-        for (Player player : players) {
-            if (player.getName().equals(name)) {
-                return player;
-            }
-        }
-        return null;
-    }
-
-    // Геттер для списка
-    public List<Player> getPlayers() {
+    public Map<String, Player> getPlayers() {
         return players;
     }
 }
