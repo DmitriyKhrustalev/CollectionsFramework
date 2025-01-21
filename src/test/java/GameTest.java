@@ -6,7 +6,6 @@ public class GameTest {
 
     private Game game;
 
-    // Игроки для удобства использования в тестах
     private Player player1;
     private Player player2;
     private Player player3;
@@ -16,40 +15,35 @@ public class GameTest {
     public void setup() {
         game = new Game();
 
-        // Создаём нескольких игроков с разной силой
         player1 = new Player(1, "Alice", 10);
         player2 = new Player(2, "Bob", 15);
         player3 = new Player(3, "Charlie", 10);
         player4 = new Player(4, "Den", 20);
 
-        // Регистрируем некоторых игроков
         game.register(player1);
         game.register(player2);
         game.register(player3);
-        // player4 не регистрирую специально
     }
 
     @Test
     public void shouldRegisterPlayersSuccessfully() {
-        // Проверяем, что зарегистрированные игроки действительно в списке
-        Assertions.assertTrue(game.getPlayers().contains(player1));
-        Assertions.assertTrue(game.getPlayers().contains(player2));
-        Assertions.assertTrue(game.getPlayers().contains(player3));
-        // А не зарегистрированный там не содержится
-        Assertions.assertFalse(game.getPlayers().contains(player4));
+        // Проверяем, что зарегистрированные игроки есть в Map
+        Assertions.assertTrue(game.getPlayers().containsKey("Alice"));
+        Assertions.assertTrue(game.getPlayers().containsKey("Bob"));
+        Assertions.assertTrue(game.getPlayers().containsKey("Charlie"));
+        // А "Den" (player4) не зарегистрирован
+        Assertions.assertFalse(game.getPlayers().containsKey("Den"));
     }
 
     @Test
     public void shouldThrowExceptionIfFirstPlayerNotRegistered() {
-        // Проверяем, что выпадет исключение, когда нет первого игрока
         Assertions.assertThrows(NotRegisteredException.class, () -> {
-            game.round("Den", "Bob"); // "Den" (player4) не зарегистрирован
+            game.round("Den", "Bob");
         });
     }
 
     @Test
     public void shouldThrowExceptionIfSecondPlayerNotRegistered() {
-        // Проверяем, что выпадет исключение, когда нет второго игрока
         Assertions.assertThrows(NotRegisteredException.class, () -> {
             game.round("Bob", "Den");
         });
@@ -57,7 +51,6 @@ public class GameTest {
 
     @Test
     public void shouldThrowExceptionIfBothPlayersNotRegistered() {
-        // Проверяем случай, когда оба игрока не зарегистрированы
         Assertions.assertThrows(NotRegisteredException.class, () -> {
             game.round("Den", "SomeoneUnknown");
         });
@@ -65,10 +58,7 @@ public class GameTest {
 
     @Test
     public void shouldReturn1IfFirstPlayerIsStronger() {
-        game.register(new Player(5, "BobTheStrong", 15));
-
         int result = game.round("Bob", "Charlie");
-
         Assertions.assertEquals(1, result);
     }
 
